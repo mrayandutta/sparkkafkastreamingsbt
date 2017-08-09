@@ -55,7 +55,6 @@ object StatefulEventProcessor
       if (!state.exists) state.update((None, Set.empty))
 
       var updatedSet = Set[PerformanceEvent]()
-
       value.get.foreach(updatedSet.add(_))
 
       //exclude non-relevant events
@@ -66,16 +65,13 @@ object StatefulEventProcessor
       var lastAlertTime = state.get()._1
 
       //launch alert if no alerts launched yet or if last launched alert was more than 120 seconds ago
-      if (updatedSet.size >= 2 && (lastAlertTime.isEmpty || !((System.currentTimeMillis() - lastAlertTime.get) <= 120000))) {
-
+      if (updatedSet.size >= 2 && (lastAlertTime.isEmpty || !((System.currentTimeMillis() - lastAlertTime.get) <= 120000)))
+      {
         lastAlertTime = Some(System.currentTimeMillis())
-
         //alert in json to be published to kafka
-
       }
 
       state.update((lastAlertTime, updatedSet))
-
       Some((key, updatedSet)) // mapped value
     }
 
