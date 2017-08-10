@@ -10,7 +10,7 @@ Add/Uncomment following line to server.properties file under config folder:
 delete.topic.enable=true
 Then,run the following command:
 
-%KAFKA_HOME%\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic test
+%KAFKA_HOME%\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic events
 once deleted,re-create it.
 
 List the topics
@@ -19,15 +19,15 @@ List the topics
 
 Topic Creation (If needed)
 
-%KAFKA_HOME%\bin\windows\kafka-topics --create --zookeeper 127.0.0.1:2181 --replication-factor 1 --partitions 1 --topic event
+%KAFKA_HOME%\bin\windows\kafka-topics --create --zookeeper 127.0.0.1:2181 --replication-factor 1 --partitions 1 --topic events
 
 
 Create a Producer
-%KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic event
+%KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic events
 
 Create a Consumer
-%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic event
-%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic event -from-beginning
+%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic events
+%KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic events -from-beginning
 
 Run Logstash
 %LOGSTASH_HOME%\bin\logstash -f %LOGSTASH_HOME%\conf\file_to_kafka.conf --configtest

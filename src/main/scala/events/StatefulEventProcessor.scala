@@ -37,13 +37,16 @@ object StatefulEventProcessor
     val ssc = new StreamingContext(conf, Seconds(5))
     ssc.checkpoint("C:/checkpoint/") // set checkpoint directory
 
-    val topicName = "event"
+    val topicName = "events"
 
     val kafkaParams: Map[String, String] = Map("metadata.broker.list" -> "localhost:9092","auto.offset.reset" -> "smallest")
 
     val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set(topicName))
+    val messages = kafkaStream.flatMap(x =>  x._2.split("|"))
+    messages.print(10)
+    print(s"Kafka Stream :$kafkaStream")
 
-    val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
+    /*val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
 
     val events = nonFilteredEvents.filter((event) => {
       event.highUtiization() && event.isTimeRelevant()
@@ -81,7 +84,7 @@ object StatefulEventProcessor
     val mappedStatefulStream = groupedEvents.mapWithState(spec)
 
     mappedStatefulStream.print()
-
+*/
     ssc.start()
     ssc.awaitTermination()
   }
