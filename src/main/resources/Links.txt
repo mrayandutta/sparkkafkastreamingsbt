@@ -1,0 +1,11 @@
+Spark Event Processing
+https://github.com/andriymz/Spark-Streaming
+
+
+http://rishiverma.com/software/blog/complex-event-processing-using-spark-streaming-and-sparksql/
+https://objectpartners.com/2016/10/13/analyzing-kafka-data-streams-with-spark/
+
+
+https://mapr.com/blog/monitoring-real-time-uber-data-using-spark-machine-learning-streaming-and-kafka-api-part-2/
+
+
