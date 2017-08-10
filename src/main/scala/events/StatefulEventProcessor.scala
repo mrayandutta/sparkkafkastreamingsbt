@@ -15,6 +15,7 @@ object StatefulEventProcessor
 
   def createEvent(strEvent: String): PerformanceEvent =
   {
+    print(s"Event String $strEvent")
     val eventData = strEvent.split('|')
 
     val instanceId = eventData(0).toInt
@@ -36,10 +37,11 @@ object StatefulEventProcessor
     val ssc = new StreamingContext(conf, Seconds(5))
     ssc.checkpoint("C:/checkpoint/") // set checkpoint directory
 
+    val topicName = "event"
 
     val kafkaParams: Map[String, String] = Map("metadata.broker.list" -> "localhost:9092","auto.offset.reset" -> "smallest")
 
-    val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set("events"))
+    val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set(topicName))
 
     val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
 

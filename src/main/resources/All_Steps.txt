@@ -6,6 +6,13 @@ Run Kafka
 
 %KAFKA_HOME%\bin\windows\kafka-server-start.bat %KAFKA_HOME%\config\server.properties
 
+Add/Uncomment following line to server.properties file under config folder:
+delete.topic.enable=true
+Then,run the following command:
+
+%KAFKA_HOME%\bin\windows\kafka-topics.bat --zookeeper localhost:2181 --delete --topic test
+once deleted,re-create it.
+
 List the topics
 
 %KAFKA_HOME%/bin/windows/kafka-topics.bat --list --zookeeper 127.0.0.1:2181
