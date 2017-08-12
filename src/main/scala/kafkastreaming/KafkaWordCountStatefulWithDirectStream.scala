@@ -37,6 +37,7 @@ object KafkaWordCountStatefulWithDirectStream
     //kafkaStream.print()  //prints the stream of data received
     wordCounts.print()   //prints the wordcount result of the stream
 
+    //Line to add hadoop home dir
     //System.setProperty("hadoop.home.dir", "c://winutils")
     ssc.checkpoint("C:/checkpoint/")
     ssc.start()
