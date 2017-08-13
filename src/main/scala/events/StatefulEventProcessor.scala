@@ -4,7 +4,7 @@ import org.apache.spark._
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import _root_.kafka.serializer.StringDecoder
-import scala.collection.mutable.Set
+import utility.LogUtil
 
 /**
   * Created by mrpiku2017 on 8/10/2017.
@@ -15,7 +15,7 @@ object StatefulEventProcessor
 
   def createEvent(strEvent: String): PerformanceEvent =
   {
-    print(s"Event String $strEvent")
+    LogUtil.logger.error("Event String "+strEvent)
     val eventData = strEvent.split('|')
 
     val instanceId = eventData(0).toInt
@@ -44,7 +44,7 @@ object StatefulEventProcessor
     val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set(topicName))
     val messages = kafkaStream.flatMap(x =>  x._2.split("|"))
     messages.print(10)
-    print(s"Kafka Stream :$kafkaStream")
+    LogUtil.logger.error("Kafka Stream  "+kafkaStream)
 
     /*val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
 
