@@ -24,6 +24,7 @@ Topic Creation (If needed)
 
 Create a Producer
 %KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic events
+%KAFKA_HOME%/bin/windows/kafka-console-producer --broker-list 127.0.0.1:9092 --topic wordcount
 
 Create a Consumer
 %KAFKA_HOME%/bin/windows/kafka-console-consumer.bat --zookeeper 127.0.0.1:2181 --topic events
