@@ -5,6 +5,7 @@ import org.apache.spark._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming._
+import utility.LogUtil
 
 
 
@@ -27,7 +28,6 @@ object KafkaWordCountStatefulWithDirectStreamMapWithState
     val topicsSet = List("test").toSet
     val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
       ssc, kafkaParams, topicsSet)
-
 
     val words = kafkaStream.flatMap(x =>  x._2.split(" "))
     val wordDstream = words.map(x => (x, 1))
