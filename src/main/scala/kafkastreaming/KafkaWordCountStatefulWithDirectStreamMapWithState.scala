@@ -14,10 +14,10 @@ object KafkaWordCountStatefulWithDirectStreamMapWithState
 {
   def main(args: Array[String]): Unit = {
 
-    val rootLogger = Logger.getRootLogger()
-    rootLogger.setLevel(Level.ERROR)
-    Logger.getLogger("org").setLevel(Level.OFF)
-    Logger.getLogger("akka").setLevel(Level.OFF)
+
+    val logger = Logger.getLogger(getClass.getName)
+    logger.error("$$$$$$$$$$$$$$$$$$$$  starting the applcation $$$$$$$$$$$$$$$$$$$$$$$$")
+
     val conf = new SparkConf().setMaster("local[*]").setAppName("KafkaWordCount")
     val ssc = new StreamingContext(conf, Seconds(10))
 
