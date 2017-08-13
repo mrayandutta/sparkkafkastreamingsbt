@@ -5,7 +5,8 @@ import org.apache.spark._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.streaming._
-import org.apache.log4j.{Level, Logger}
+
+
 
 /**
   * Created by mrpiku2017 on 8/9/2017.
@@ -14,11 +15,10 @@ object KafkaWordCountStatefulWithDirectStreamMapWithState
 {
   def main(args: Array[String]): Unit = {
 
+    //val logger = Logger.getLogger(getClass.getName)
+    LogUtil.logger.error("$$$$$$$$$$$$$$$$$$$$  starting the applcation $$$$$$$$$$$$$$$$$$$$$$$$")
 
-    val logger = Logger.getLogger(getClass.getName)
-    logger.error("$$$$$$$$$$$$$$$$$$$$  starting the applcation $$$$$$$$$$$$$$$$$$$$$$$$")
-
-    val conf = new SparkConf().setMaster("local[*]").setAppName("KafkaWordCount")
+    val conf = new SparkConf().setMaster("local[1]").setAppName("KafkaWordCount")
     val ssc = new StreamingContext(conf, Seconds(10))
 
     // Create direct kafka stream with brokers and topics
@@ -34,7 +34,9 @@ object KafkaWordCountStatefulWithDirectStreamMapWithState
 
     val mappingFunc = (word: String, one: Option[Int], state: State[Int]) => {
       val sum = one.getOrElse(0) + state.getOption.getOrElse(0)
+      LogUtil.logger.error(s"word :$word,sum:$sum")
       val output = (word, sum)
+      LogUtil.logger.error(s"output :$output")
       state.update(sum)
       output
     }
