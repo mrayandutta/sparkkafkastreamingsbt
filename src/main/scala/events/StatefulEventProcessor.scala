@@ -19,17 +19,20 @@ object StatefulEventProcessor
     val eventData = strEvent.split('|')
 
     val instanceId = eventData(0).toInt
-    val time = eventData(1).toLong
-    val utilization = eventData(2).toDouble
+    val time = eventData(1).toInt
+    val utilization = eventData(2).toInt
+
+    LogUtil.logger.error("instanceId  "+instanceId+",time:"+time+",utilization:"+utilization)
 
     new PerformanceEvent(instanceId, time, utilization)
   }
 
   def main(args: Array[String]): Unit = {
 
+    LogUtil.logger.error("Application Started @@@@@@@@@@@@@@@@@@@@@@@@@@2")
     val conf = new SparkConf()
       .setAppName("StatefulEventProcessor")
-      .setMaster("local[*]")
+      .setMaster("local[2]")
       .set("spark.driver.memory", "2g")
       .set("spark.streaming.kafka.maxRatePerPartition", "50000")
       .set("spark.streaming.backpressure.enabled", "true")
@@ -46,8 +49,9 @@ object StatefulEventProcessor
     messages.print(10)
     LogUtil.logger.error("Kafka Stream  "+kafkaStream)
 
-    /*val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
+    val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
 
+    /*
     val events = nonFilteredEvents.filter((event) => {
       event.highUtiization() && event.isTimeRelevant()
     })
