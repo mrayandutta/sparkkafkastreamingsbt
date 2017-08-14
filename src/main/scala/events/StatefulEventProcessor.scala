@@ -2,8 +2,6 @@ package events
 
 import org.apache.spark._
 import org.apache.spark.streaming._
-import org.apache.spark.streaming.kafka._
-import _root_.kafka.serializer.StringDecoder
 import utility.LogUtil
 
 /**
@@ -16,7 +14,7 @@ object StatefulEventProcessor
   def createEvent(strEvent: String): PerformanceEvent =
   {
     LogUtil.logger.error("Event String "+strEvent)
-    val eventData = strEvent.split('|')
+    val eventData = strEvent.split(',')
 
     val instanceId = eventData(0).toInt
     val time = eventData(1).toInt
@@ -41,15 +39,74 @@ object StatefulEventProcessor
     ssc.checkpoint("C:/checkpoint/") // set checkpoint directory
 
     val topicName = "events"
-
     val kafkaParams: Map[String, String] = Map("metadata.broker.list" -> "localhost:9092","auto.offset.reset" -> "smallest")
 
-    val kafkaStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set(topicName))
-    val messages = kafkaStream.flatMap(x =>  x._2.split("|"))
-    messages.print(10)
-    LogUtil.logger.error("Kafka Stream  "+kafkaStream)
+    //val stream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, scala.collection.immutable.Set(topicName))
+    val stream = ssc.socketTextStream("localhost", 9999)
+    val inputs = stream.map(
+      message=>
+      {
+        val event = createEvent(message)
+        (event.instanceId,event.utilization)
+      }
+    )
+    LogUtil.logger.error("inputs:"+inputs.print(10))
 
-    val nonFilteredEvents = kafkaStream.map((tuple) => createEvent(tuple._2))
+    val mappingFunc = (key: Int, value: Option[Int], state: State[Int]) => {
+
+      LogUtil.logger.error(s"mappingFunc started ..for key : $key")
+      if(state.getOption.getOrElse(0)==0)
+      {
+        LogUtil.logger.error("New candidate !!!")
+      }
+      else
+      {
+        LogUtil.logger.error("Old candidate :(")
+      }
+      //LogUtil.logger.error(s"mappingFunc started ..for key : $key")
+      val sum = value.getOrElse(0) + state.getOption.getOrElse(0)
+      LogUtil.logger.error(s"key :$key,value:$value,sum:$sum")
+      state.update(sum)
+      val output = (key, sum)
+      if(sum>5)
+        {
+          print("Alert !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        }
+      //LogUtil.logger.error(s"output :$output")
+      //LogUtil.logger.error(s"mappingFunc ended ..")
+      output
+    }
+
+    val stateDstream = inputs.mapWithState(
+      StateSpec.function(mappingFunc))
+    stateDstream.print()
+    /*
+    val mappingFunc = (instanceId: Int, newEvent: Option[PerformanceEvent], state: State[PerformanceEvent]) => {
+
+      val existingEvents: Seq[PerformanceEvent] =
+        state
+          .getOption()
+          .map(_.userEvents)
+          .getOrElse(Seq[UserEvent]())
+
+      val sum = one.getOrElse(0) + state.getOption.getOrElse(0)
+      LogUtil.logger.error(s"word :$word,sum:$sum")
+      val output = (word, sum)
+      LogUtil.logger.error(s"output :$output")
+      state.update(sum)
+      output
+    }
+    */
+
+   /* val stateDstream = message.mapWithState(
+      StateSpec.function(mappingFunc))//.initialState(initialRDD))
+    stateDstream.print()
+*/
+    //val messages = stream.flatMap(x =>  x._2.split("|"))
+    //messages.print(10)
+    //LogUtil.logger.error("Kafka Stream  "+stream)
+
+    //val nonFilteredEvents = stream.map((tuple) => createEvent(tuple))
 
     /*
     val events = nonFilteredEvents.filter((event) => {
