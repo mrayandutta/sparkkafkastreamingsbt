@@ -1,11 +1,12 @@
 package SocketStreaming
 
+import org.apache.spark._
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._ // not necessary in Spark 1.3+
+
 object SocketStreamingWordCount {
 
   def main(args: Array[String]): Unit = {
-    import org.apache.spark._
-    import org.apache.spark.streaming._
-    import org.apache.spark.streaming.StreamingContext._ // not necessary in Spark 1.3+
     // Create a local StreamingContext with two working thread and batch interval of 1 second.
     // The master requires 2 cores to prevent from a starvation scenario.
     val conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount")
