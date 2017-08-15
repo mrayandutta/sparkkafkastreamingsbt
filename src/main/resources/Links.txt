@@ -10,4 +10,6 @@ https://objectpartners.com/2016/10/13/analyzing-kafka-data-streams-with-spark/
 
 https://mapr.com/blog/monitoring-real-time-uber-data-using-spark-machine-learning-streaming-and-kafka-api-part-2/
 
-
+Testing link
+https://github.com/raphaelbrugier/spark-testing-example.git
+https://medium.com/@mrpowers/testing-spark-applications-8c590d3215fa
